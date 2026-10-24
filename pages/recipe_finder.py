@@ -77,7 +77,7 @@ if st.button("👀 Mutasd a recepteket", type="primary"):
                                         diet_pref = "Nincs külön étrendi igény"
 
             prompt = f"""
-Adj pontosan 3 egyszerű, rövid receptet magyarul.
+Adj pontosan 3 egyszerű, rövid receptet magyarul a street kitchen oldaláról (https://streetkitchen.hu/).
 
 Étrendi igény: {diet_pref}
 Elkészítési sebesség: {"30 perc alatt" if speed == "Gyors (30 perc alatt)" else "Ráérek nincs időkorlát"}
@@ -96,7 +96,8 @@ Kizárólag az alábbi szerkezetű JSON-t add vissza:
     {{
       "name": "Recept neve",
       "ingredients": ["hozzávaló 1", "hozzávaló 2"],
-      "instructions": ["1. lépés", "2. lépés"]
+      "instructions": ["1. lépés", "2. lépés"],
+      "street_kitchen_url": ["https://streetkitchen.hu/recept-neve"]
     }}
   ]
 }}
@@ -139,6 +140,10 @@ for i, recipe in enumerate(st.session_state.recipe_finder_recipes):
         st.markdown("**Elkészítés:**")
         for step in recipe.get("instructions", []):
             st.write(f"- {step}")
+
+        st.markdown("**Street Kitchen URL:**")
+        for url in recipe.get("street_kitchen_url", []):
+            st.write(f"- [{url}]({url})")
 
         if st.button("Mentés későbbre", key=f"save_recipe_{i}"):
             try:
