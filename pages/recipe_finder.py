@@ -3,6 +3,7 @@ import os
 import streamlit as st
 from google import genai
 from google.genai import types
+from recipe_storage import save_recipe
 
 st.set_page_config(
     page_title="Mit egyek ma?",
@@ -13,8 +14,6 @@ st.title("👩‍🍳 Le petit sous-chef d'Adèle")
 
 if "recipe_finder_recipes" not in st.session_state:
     st.session_state.recipe_finder_recipes = []
-if "saved_recipes" not in st.session_state:
-    st.session_state.saved_recipes = []
 
 # API-kulcs beállítása Streamlit secretsből vagy környezeti változóból
 try:
@@ -142,8 +141,10 @@ for i, recipe in enumerate(st.session_state.recipe_finder_recipes):
             st.write(f"- {step}")
 
         if st.button("Mentés későbbre", key=f"save_recipe_{i}"):
-            if recipe in st.session_state.saved_recipes:
-                st.info("Ez a recept már el van mentve.")
-            else:
-                st.session_state.saved_recipes.append(recipe)
-                st.success("A recept el lett mentve a mentett receptekhez.")
+            try:
+                if save_recipe(recipe):
+                    st.success("A recept el lett mentve a közös mentett listába.")
+                else:
+                    st.info("Ez a recept már el van mentve.")
+            except Exception as e:
+                st.error(f"Nem sikerült elmenteni a receptet: {e}")
