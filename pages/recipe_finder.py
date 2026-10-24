@@ -1,0 +1,136 @@
+import json
+import os
+import streamlit as st
+from google import genai
+from google.genai import types
+
+st.set_page_config(
+    page_title="Mit egyek ma?",
+    page_icon="🍳🤔"
+)
+
+st.title("👩‍🍳 Le petit sous-chef d'Adèle")
+
+# API-kulcs beállítása Streamlit secretsből vagy környezeti változóból
+try:
+    API_KEY = st.secrets.get("GEMINI_API_KEY", "")
+except Exception:
+    API_KEY = ""
+
+API_KEY = API_KEY or os.getenv("GEMINI_API_KEY", "")
+
+
+@st.cache_resource
+def get_client(api_key):
+    return genai.Client(api_key=api_key)
+
+# Food preferencies
+st.text("Válaszd ki az étrendi preferenciáidat:")
+is_vegetarian = st.checkbox("Vegetáriánus")
+is_fish_free = st.checkbox("Halmentes", value=True)
+
+# Speed
+st.text("Válaszd ki a főzési sebességet:")
+speed = st.radio(
+    "Milyen gyorsan szeretnél főzni?",
+    ["Gyors (30 perc alatt)", "Ráérek"],
+)
+
+# Process preferencies
+st.text("Válaszd ki a főzési preferenciáidat:")
+is_oven = st.checkbox("Sütőben süthető")
+is_stove = st.checkbox("Tűzhelyen főzhető")
+is_noCook = st.checkbox("Nem igényel főzést")
+
+# Food types
+food_type = st.selectbox(
+    "Milyen ételt szeretnél enni?",
+    ["Szendvics", "Főzelék", "Leves", "Saláta", "Tészta", "Desszert", "Egyéb"],
+)
+
+# Storage
+use_storage = st.checkbox("Szeretném az itthoni alapanyagokat használni")
+storage = st.text_area("Írd be mi van otthon:", height=100) if use_storage else ""
+
+if st.button("Kérem a receptet ✨", type="primary"):
+    if not API_KEY:
+        st.error(
+            "Add meg a GEMINI_API_KEY értékét "
+            "a Streamlit secrets vagy a környezeti változók között!"
+        )
+    else:
+        try:
+            client = get_client(API_KEY)
+
+            match (is_vegetarian, is_fish_free):
+                                case (True, True):
+                                        diet_pref = "Vegetáriánus és húsmentes + halmentes"
+                                case (True, False):
+                                        diet_pref = "Vegetáriánus és húsmentes"
+                                case (False, True):
+                                        diet_pref = "Nem tartalmaz seafoodot pl. hal, kagyló, rák, egyéb tenger gyümölcsei, egyéb vizi élőlény"
+                                case _:
+                                        diet_pref = "Nincs külön étrendi igény"
+
+            prompt = f"""
+Adj pontosan 3 egyszerű, rövid receptet magyarul.
+
+Étrendi igény: {diet_pref}
+Elkészítési sebesség: {"30 perc alatt" if speed == "Gyors (30 perc alatt)" else "Ráérek nincs időkorlát"}
+Étel típusa: {food_type}
+Mi van itthon: {storage}
+Elkészítési mód: {"Sütőben süthető" if is_oven else ""} {"Tűzhelyen süthető (serpenyőben, lábosban, fazékban)" if is_stove else ""} {"Nem igényel főzést" if is_noCook else ""}
+
+Receptenként:
+- Legfeljebb 5 rövid elkészítési lépés.
+- Hétköznapi boltban beszerezhető alapanyagok.
+- Vedd számításba a felhasználó által megadott hozzávalókat amennyiben kapsz hozzá adatokat a "Mi van itthon: {storage}" részben.
+
+Kizárólag az alábbi szerkezetű JSON-t add vissza:
+{{
+  "recipes": [
+    {{
+      "name": "Recept neve",
+      "ingredients": ["hozzávaló 1", "hozzávaló 2"],
+      "instructions": ["1. lépés", "2. lépés"]
+    }}
+  ]
+}}
+"""
+
+            with st.spinner("Gyors receptgenerálás... ⚡"):
+                response = client.models.generate_content(
+                    model="gemini-3.5-flash-lite",
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        temperature=0.7,
+                        max_output_tokens=1500,
+                    ),
+                )
+
+            data = json.loads(response.text)
+            recipes = data.get("recipes", [])
+
+            if not recipes:
+                st.warning("Nem érkezett recept. Próbáld újra!")
+            else:
+                st.success("Elkészültek a receptek! 🍽️")
+
+                for i, recipe in enumerate(recipes, 1):
+                    with st.expander(
+                        f"📖 {i}. {recipe.get('name', 'Recept')}",
+                        expanded=True,
+                    ):
+                        st.markdown("**Hozzávalók:**")
+                        for ing in recipe.get("ingredients", []):
+                            st.write(f"- {ing}")
+
+                        st.markdown("**Elkészítés:**")
+                        for step in recipe.get("instructions", []):
+                            st.write(f"- {step}")
+
+        except json.JSONDecodeError:
+            st.error("A válasz nem érvényes JSON. Próbáld újra!")
+        except Exception as e:
+            st.error(f"Hiba történt: {e}")
