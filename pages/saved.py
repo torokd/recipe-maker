@@ -10,7 +10,7 @@ try:
         st.info("Még nincs elmentett recept. Ments el egyet a receptkereső oldalon!")
     else:
         for recipe in saved_recipes:
-            with st.expander(f"📖 {recipe.get('name', 'Recept')}", expanded=True):
+            with st.expander(f"📖 {recipe.get('name', 'Recept')}", expanded=False):
                 st.markdown("**Hozzávalók:**")
                 for ingredient in recipe.get("ingredients", []):
                     st.write(f"- {ingredient}")
