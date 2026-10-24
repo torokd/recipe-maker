@@ -11,6 +11,11 @@ st.set_page_config(
 
 st.title("👩‍🍳 Le petit sous-chef d'Adèle")
 
+if "recipe_finder_recipes" not in st.session_state:
+    st.session_state.recipe_finder_recipes = []
+if "saved_recipes" not in st.session_state:
+    st.session_state.saved_recipes = []
+
 # API-kulcs beállítása Streamlit secretsből vagy környezeti változóból
 try:
     API_KEY = st.secrets.get("GEMINI_API_KEY", "")
@@ -52,7 +57,7 @@ food_type = st.selectbox(
 use_storage = st.checkbox("Szeretném az itthoni alapanyagokat használni")
 storage = st.text_area("Írd be mi van otthon:", height=100) if use_storage else ""
 
-if st.button("Kérem a receptet ✨", type="primary"):
+if st.button("👀 Mutasd a recepteket", type="primary"):
     if not API_KEY:
         st.error(
             "Add meg a GEMINI_API_KEY értékét "
@@ -98,7 +103,7 @@ Kizárólag az alábbi szerkezetű JSON-t add vissza:
 }}
 """
 
-            with st.spinner("Gyors receptgenerálás... ⚡"):
+            with st.spinner("Máris érkeznek a receptek"):
                 response = client.models.generate_content(
                     model="gemini-3.5-flash-lite",
                     contents=prompt,
@@ -113,24 +118,32 @@ Kizárólag az alábbi szerkezetű JSON-t add vissza:
             recipes = data.get("recipes", [])
 
             if not recipes:
-                st.warning("Nem érkezett recept. Próbáld újra!")
+                st.warning("😢 Nem érkezett recept. Próbáld újra!")
             else:
-                st.success("Elkészültek a receptek! 🍽️")
-
-                for i, recipe in enumerate(recipes, 1):
-                    with st.expander(
-                        f"📖 {i}. {recipe.get('name', 'Recept')}",
-                        expanded=True,
-                    ):
-                        st.markdown("**Hozzávalók:**")
-                        for ing in recipe.get("ingredients", []):
-                            st.write(f"- {ing}")
-
-                        st.markdown("**Elkészítés:**")
-                        for step in recipe.get("instructions", []):
-                            st.write(f"- {step}")
+                st.session_state.recipe_finder_recipes = recipes
+                st.success("✅ Elkészültek a receptek!")
 
         except json.JSONDecodeError:
-            st.error("A válasz nem érvényes JSON. Próbáld újra!")
+            st.error("⚠️ A válasz nem érvényes JSON. Próbáld újra!")
         except Exception as e:
-            st.error(f"Hiba történt: {e}")
+            st.error(f"‼️ Hiba történt: {e}")
+
+for i, recipe in enumerate(st.session_state.recipe_finder_recipes):
+    with st.expander(
+        f"📖 {recipe.get('name', 'Recept')}",
+        expanded=True,
+    ):
+        st.markdown("**Hozzávalók:**")
+        for ing in recipe.get("ingredients", []):
+            st.write(f"- {ing}")
+
+        st.markdown("**Elkészítés:**")
+        for step in recipe.get("instructions", []):
+            st.write(f"- {step}")
+
+        if st.button("Mentés későbbre", key=f"save_recipe_{i}"):
+            if recipe in st.session_state.saved_recipes:
+                st.info("Ez a recept már el van mentve.")
+            else:
+                st.session_state.saved_recipes.append(recipe)
+                st.success("A recept el lett mentve a mentett receptekhez.")
