@@ -24,7 +24,7 @@ def get_saved_recipes() -> list[dict]:
     response = (
         get_supabase_client()
         .table("saved_recipes")
-        .select("id, name, ingredients, instructions")
+        .select("id, name, ingredients, instructions, is_favorite")
         .order("created_at", desc=True)
         .execute()
     )
@@ -58,3 +58,13 @@ def save_recipe(recipe: dict) -> bool:
 
 def delete_saved_recipe(recipe_id: str) -> None:
     get_supabase_client().table("saved_recipes").delete().eq("id", recipe_id).execute()
+
+
+def set_recipe_favorite(recipe_id: str, is_favorite: bool) -> None:
+    (
+        get_supabase_client()
+        .table("saved_recipes")
+        .update({"is_favorite": is_favorite})
+        .eq("id", recipe_id)
+        .execute()
+    )

@@ -1,6 +1,10 @@
 import time
 import streamlit as st
-from recipe_storage import delete_saved_recipe, get_saved_recipes
+from recipe_storage import (
+    delete_saved_recipe,
+    get_saved_recipes,
+    set_recipe_favorite,
+)
 
 st.title("Későbbre mentett receptek 📌")
 st.caption("Ez a lista minden alkalmazáshasználó számára közös.")
@@ -28,7 +32,8 @@ try:
         st.info("Még nincs elmentett recept. Ments el egyet a receptkereső oldalon!")
     else:
         for recipe in saved_recipes:
-            expander_col, btn_col = st.columns([0.82, 0.18])
+            # Finomított oszloparányok: a recept sáv széles, a gombok szorosan egymás mellett pici helyet foglalnak
+            expander_col, favorite_col, btn_col = st.columns([0.84, 0.08, 0.08])
 
             with expander_col:
                 with st.expander(
@@ -42,17 +47,36 @@ try:
                     for step in recipe.get("instructions", []):
                         st.write(f"- {step}")
 
+            with favorite_col:
+                is_favorite = recipe.get("is_favorite", False)
+                if st.button(
+                    "❤️" if is_favorite else "🤍",
+                    type="tertiary",
+                    help=(
+                        "Eltávolítás a kedvencek közül"
+                        if is_favorite
+                        else "Hozzáadás a kedvencekhez"
+                    ),
+                    key=f"toggle_favorite_recipe_{recipe['id']}",
+                ):
+                    try:
+                        set_recipe_favorite(recipe["id"], not is_favorite)
+                        st.rerun()
+                    except Exception as favorite_error:
+                        st.error(
+                            "Nem sikerült módosítani a kedvenc állapotot: "
+                            f"{favorite_error}"
+                        )
+
             with btn_col:
                 if st.button(
-                    "Törlés",
-                    icon=":material/delete:",
+                    "🗑️",
                     type="tertiary",
                     help="Recept törlése",
                     key=f"remove_saved_recipe_{recipe['id']}",
                 ):
                     try:
                         delete_saved_recipe(recipe["id"])
-                        # Sikeres törlés toast üzenet alul középen
                         st.toast("A recept sikeresen törölve! 🗑️", icon="✅")
                         time.sleep(0.8)
                         st.rerun()

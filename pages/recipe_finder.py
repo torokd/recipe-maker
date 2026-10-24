@@ -131,7 +131,7 @@ Kizárólag az alábbi szerkezetű JSON-t add vissza:
 for i, recipe in enumerate(st.session_state.recipe_finder_recipes):
     with st.expander(
         f"📖 {recipe.get('name', 'Recept')}",
-        expanded=True,
+        expanded=False,
     ):
         st.markdown("**Hozzávalók:**")
         for ing in recipe.get("ingredients", []):
