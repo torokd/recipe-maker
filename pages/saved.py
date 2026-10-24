@@ -32,7 +32,6 @@ try:
         st.info("Még nincs elmentett recept. Ments el egyet a receptkereső oldalon!")
     else:
         for recipe in saved_recipes:
-            # Finomított oszloparányok: a recept sáv széles, a gombok szorosan egymás mellett pici helyet foglalnak
             expander_col, favorite_col, btn_col = st.columns([0.84, 0.08, 0.08])
 
             with expander_col:
@@ -46,6 +45,15 @@ try:
                     st.markdown("**Elkészítés:**")
                     for step in recipe.get("instructions", []):
                         st.write(f"- {step}")
+
+                    # --- STREET KITCHEN URL KEZELÉS ---
+                    # Ha van mentve URL, elegáns, kattintható linkként jelenítjük meg
+                    street_url = recipe.get("street_kitchen_url")
+                    if street_url:
+                        st.markdown("---")
+                        st.markdown(
+                            f"🔗 **Street Kitchen:** [{street_url}]({street_url})"
+                        )
 
             with favorite_col:
                 is_favorite = recipe.get("is_favorite", False)
