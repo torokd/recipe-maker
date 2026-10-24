@@ -11,3 +11,6 @@ env/
 # Operációs rendszer fájlok
 .DS_Store
 Thumbs.db
+
+# Egyéb fájlok, amiket nem szeretnél verziókezelni
+improvements.txt
