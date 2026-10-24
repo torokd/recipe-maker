@@ -1,0 +1,13 @@
+# Streamlit titkok (Itt van a Gemini API kulcsod!)
+.streamlit/secrets.toml
+
+# Python felesleges fájlok és virtuális környezetek
+__pycache__/
+*.pyc
+venv/
+.venv/
+env/
+
+# Operációs rendszer fájlok
+.DS_Store
+Thumbs.db
