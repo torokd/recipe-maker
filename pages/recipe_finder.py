@@ -1,3 +1,4 @@
+# Imports
 import json
 import os
 import streamlit as st
@@ -5,17 +6,8 @@ from google import genai
 from google.genai import types
 from recipe_storage import save_recipe
 
-st.set_page_config(
-    page_title="Mit egyek ma?",
-    page_icon="🍳🤔"
-)
 
-st.title("👩‍🍳 Le petit sous-chef d'Adèle")
-
-if "recipe_finder_recipes" not in st.session_state:
-    st.session_state.recipe_finder_recipes = []
-
-# API-kulcs beállítása Streamlit secretsből vagy környezeti változóból
+# API key setup
 try:
     API_KEY = st.secrets.get("GEMINI_API_KEY", "")
 except Exception:
@@ -23,24 +15,37 @@ except Exception:
 
 API_KEY = API_KEY or os.getenv("GEMINI_API_KEY", "")
 
-
 @st.cache_resource
 def get_client(api_key):
     return genai.Client(api_key=api_key)
 
-# Food preferencies
+
+# Streamlit page configuration
+# Page title and icon
+st.set_page_config(
+    page_title="Mit egyek ma?",
+    page_icon="🍳🤔"
+)
+
+# Title
+st.title("👩‍🍳 Le petit sous-chef d'Adèle")
+
+if "recipe_finder_recipes" not in st.session_state:
+    st.session_state.recipe_finder_recipes = []
+
+# Dietary preferences
 st.text("Válaszd ki az étrendi preferenciáidat:")
 is_vegetarian = st.checkbox("Vegetáriánus")
 is_fish_free = st.checkbox("Halmentes", value=True)
 
-# Speed
+# Cooking speed
 st.text("Válaszd ki a főzési sebességet:")
 speed = st.radio(
     "Milyen gyorsan szeretnél főzni?",
     ["Gyors (30 perc alatt)", "Ráérek"],
 )
 
-# Process preferencies
+# Cooking type preferencies
 st.text("Válaszd ki a főzési preferenciáidat:")
 is_oven = st.checkbox("Sütőben süthető")
 is_stove = st.checkbox("Tűzhelyen főzhető")
@@ -52,10 +57,11 @@ food_type = st.selectbox(
     ["Szendvics", "Főzelék", "Leves", "Saláta", "Tészta", "Desszert", "Egyéb"],
 )
 
-# Storage
+# At home storage
 use_storage = st.checkbox("Szeretném az itthoni alapanyagokat használni")
 storage = st.text_area("Írd be mi van otthon:", height=100) if use_storage else ""
 
+# Generate recipes button
 if st.button("👀 Mutasd a recepteket", type="primary"):
     if not API_KEY:
         st.error(
