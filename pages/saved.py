@@ -46,11 +46,8 @@ try:
                     for step in recipe.get("instructions", []):
                         st.write(f"- {step}")
 
-                    # --- STREET KITCHEN URL KEZELÉS ---
-                    # Ha van mentve URL, elegáns, kattintható linkként jelenítjük meg
                     street_url = recipe.get("street_kitchen_url")
                     if street_url:
-                        st.markdown("---")
                         st.markdown(
                             f"🔗 **Street Kitchen:** [{street_url}]({street_url})"
                         )

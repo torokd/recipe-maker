@@ -97,7 +97,8 @@ Kizárólag az alábbi szerkezetű JSON-t add vissza:
       "name": "Recept neve",
       "ingredients": ["hozzávaló 1", "hozzávaló 2"],
       "instructions": ["1. lépés", "2. lépés"],
-      "street_kitchen_url": ["https://streetkitchen.hu/recept-neve"]
+      "street_kitchen_url": "street kitchen recept URL",
+      "is_favorite": false
     }}
   ]
 }}
