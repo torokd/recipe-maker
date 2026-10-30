@@ -109,6 +109,7 @@ if st.button("Recept generálása"):
                         response_mime_type="application/json",
                         temperature=0.7,
                         max_output_tokens=5000,
+                        tools=[{"google_search": {}}]
                     ),
                 )
             recipe_data = json.loads(response.text or "{}")
