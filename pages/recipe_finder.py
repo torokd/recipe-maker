@@ -76,7 +76,7 @@ if st.button("Recept generálása"):
     if use_storage:
         if storage.strip():
             prompt_conditions.append(
-                f"Használj minnél többet az otthoni alapanyagokból, nem kell mindet felhasználni: {storage.strip()}."
+                f"Használj minnél többet az otthoni alapanyagokból, de nem kell mindet felhasználni: {storage.strip()}."
             )
         else:
             prompt_conditions.append("A felhasználó nem sorolt fel otthoni alapanyagokat, így nem kell figyelembe venni azokat.")
@@ -84,10 +84,15 @@ if st.button("Recept generálása"):
     prompt = (
         f"Javasolj {recipe_count} darab receptet magyarul az alábbi feltételek szerint. Ne adj olyan talaltokat ami szinte ugyanazok."
         "Kizárólag érvényes JSON-t adj vissza, az alábbi szerkezettel: "
+
         '{"recipes":[{"name":"recept neve","source_url":"az eredeti recept URL-je",'
         '"ingredients":[{"name":"hozzávaló","amount":"mennyiség"}],'
         '"steps":["elkészítési lépés"]}]}. '
-        "A source_url mezőben add meg az eredeti forrásoldal teljes URL-jét, ahol a receptet találtad; ne találj ki URL-t. Csak akkor adj meg url-t ha az valoban latogathato es elo URL még."
+        
+        "A source_url mezőben add meg az eredeti forrásoldal teljes URL-jét, ahol a receptet találtad."
+        "Ne találj ki URL-t hanem csak valódi URL-t csatolj ide. A forrásoldal url-t vizsgáld felül és csak valódi, jelenleg is elérhető URL-t adj vissza."
+        "Ha nem találsz vagy hibás az url, ird ki, hogy 'Hibás forrásoldal'."
+        "Vizsgáld felül az URL-eket és ha nem érded el a weboldalt megnyitva a UI-on a receptet ird ki, hogy 'Elavult forrásoldal'."
         + "\n".join(prompt_conditions)
     )
 
