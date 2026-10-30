@@ -29,10 +29,6 @@ st.set_page_config(
 # Title
 st.title("👩‍🍳 Le petit Adèle")
 
-# Dietary preferences
-st.text("Válaszd ki az étrendi preferenciáidat:")
-is_vegetarian = st.checkbox("Vegetáriánus")
-
 # Cooking speed
 cooking_speed = st.radio(
     "Mennyi időd van főzni?",
@@ -50,6 +46,9 @@ main_sub_type = st.selectbox(
     "Milyen ételt szeretnél enni?",
     ["Nincs kiválasztva", "Tészta", "Leves", "Saláta", "Sütemény", "Egyéb"], 
 ) if dish_main_type == "Főétel" else ""
+
+# Vegetarian preference
+is_vegetarian = st.checkbox("Vegetáriánus")
 
 # Seasonal ingredients preference
 is_seasonal = st.checkbox("Szezonális alapanyagok előnyben részesítése")
