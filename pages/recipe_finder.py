@@ -83,9 +83,10 @@ if st.button("Recept generálása"):
     prompt = (
         f"Javasolj {recipe_count} darab receptet magyarul az alábbi feltételek szerint. "
         "Kizárólag érvényes JSON-t adj vissza, az alábbi szerkezettel: "
-        '{"recipes":[{"name":"recept neve",'
+        '{"recipes":[{"name":"recept neve","source_url":"az eredeti recept URL-je",'
         '"ingredients":[{"name":"hozzávaló","amount":"mennyiség"}],'
         '"steps":["elkészítési lépés"]}]}. '
+        "A source_url mezőben add meg az eredeti forrásoldal teljes URL-jét, ahol a receptet találtad; ne találj ki URL-t. Csak akkor adj meg url-t ha az valoban latogathato es elo URL még."
         + "\n".join(prompt_conditions)
     )
 
@@ -100,7 +101,7 @@ if st.button("Recept generálása"):
                     config=types.GenerateContentConfig(
                         response_mime_type="application/json",
                         temperature=0.7,
-                        max_output_tokens=2000,
+                        max_output_tokens=5000,
                     ),
                 )
             recipe_data = json.loads(response.text or "{}")
@@ -120,6 +121,7 @@ for recipe_batch in st.session_state.recipe_finder_recipes:
 
         recipe_name = recipe.get("name", "Névtelen recept")
         with st.expander(recipe_name):
+
             st.subheader("Hozzávalók")
             ingredients = recipe.get("ingredients", [])
             if ingredients:
@@ -140,3 +142,8 @@ for recipe_batch in st.session_state.recipe_finder_recipes:
                     st.write(f"{index}. {step}")
             else:
                 st.write("Nincsenek megadva elkészítési lépések.")
+
+            source_url = recipe.get("source_url", "")
+            st.subheader("Recept linkje")
+            if source_url:
+                st.markdown(f"[{source_url}]({source_url})")
