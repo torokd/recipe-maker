@@ -81,7 +81,7 @@ if st.button("Recept generálása"):
             prompt_conditions.append("A felhasználó nem sorolt fel otthoni alapanyagokat, így nem kell figyelembe venni azokat.")
 
     prompt = (
-        f"Javasolj {recipe_count} darab receptet magyarul az alábbi feltételek szerint. "
+        f"Javasolj {recipe_count} darab receptet magyarul az alábbi feltételek szerint. Ne adj olyan talaltokat ami szinte ugyanazok."
         "Kizárólag érvényes JSON-t adj vissza, az alábbi szerkezettel: "
         '{"recipes":[{"name":"recept neve","source_url":"az eredeti recept URL-je",'
         '"ingredients":[{"name":"hozzávaló","amount":"mennyiség"}],'
