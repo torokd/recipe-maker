@@ -108,12 +108,13 @@ if st.button("Recept generálása"):
         try:
             with st.spinner("Receptek generálása..."):
                 response = get_client(API_KEY).models.generate_content(
-                    model="gemini-3.5-flash-lite",
+                    #model="gemini-3.5-flash-lite",
+                    model="gemini-3.8-flash",
                     contents=prompt,
                     config=types.GenerateContentConfig(
                         response_mime_type="application/json",
                         temperature=0.7,
-                        max_output_tokens=5000,
+                        max_output_tokens=1000,
                         tools=[{"google_search": {}}]
                     ),
                 )
