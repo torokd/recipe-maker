@@ -39,11 +39,6 @@ cooking_speed = st.radio(
     ["Gyors (30 perc alatt)", "Ráérek"],
 )
 
-# Seasonal ingredients
-st.text("Szeretnél szezonális alapanyagokat használni?")
-is_seasonal = st.checkbox("Szezonális alapanyagok előnyben részesítése")
-seasonal_info = __import__("datetime").date.today().isoformat()
-
 # Food main types
 dish_main_type = st.selectbox(
     "Milyen ételt szeretnél enni?",
@@ -55,6 +50,10 @@ main_sub_type = st.selectbox(
     "Milyen ételt szeretnél enni?",
     ["Nincs kiválasztva", "Tészta", "Leves", "Saláta", "Sütemény", "Egyéb"], 
 ) if dish_main_type == "Főétel" else ""
+
+# Seasonal ingredients preference
+is_seasonal = st.checkbox("Szezonális alapanyagok előnyben részesítése")
+seasonal_info = __import__("datetime").date.today().isoformat()
 
 # At home storage
 use_storage = st.checkbox("Szeretném az itthoni alapanyagokat használni")
