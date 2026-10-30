@@ -60,7 +60,7 @@ recipe_count = st.selectbox(
     [1, 2, 3, 4, 5],
 )
 
-# Generate recipes button
+# Generate recipes button and prompt construction
 if st.button("Recept generálása"):
     # Replace the previous results instead of accumulating recipe history.
     st.session_state.recipe_finder_recipes = []
@@ -90,6 +90,7 @@ if st.button("Recept generálása"):
         + "\n".join(prompt_conditions)
     )
 
+    # error handling for missing API key
     if not API_KEY:
         st.error("A Gemini API-kulcs nincs beállítva.")
     else:
