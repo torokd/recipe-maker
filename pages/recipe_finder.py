@@ -22,8 +22,8 @@ if "recipe_finder_recipes" not in st.session_state:
 
 # Page title and icon
 st.set_page_config(
-    page_title="Mit egyek ma?",
-    page_icon="🍳🤔"
+    page_title="Le petit Adèle",
+    page_icon="👩‍🍳"
 )
 
 # Title
