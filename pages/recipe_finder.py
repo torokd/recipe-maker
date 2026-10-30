@@ -39,12 +39,13 @@ cooking_speed = st.radio(
     ["Gyors (30 perc alatt)", "Ráérek"],
 )
 
-# Food types
+# Food main types
 dish_main_type = st.selectbox(
     "Milyen ételt szeretnél enni?",
     ["Leves", "Főétel"],
 )
 
+# Food sub types
 main_sub_type = st.selectbox(
     "Milyen ételt szeretnél enni?",
     ["Nincs kiválasztva", "Tészta", "Leves", "Saláta", "Sütemény", "Egyéb"], 
