@@ -58,7 +58,6 @@ storage = st.text_area("Írd be mi van otthon:", height=100) if use_storage else
 recipe_count = st.selectbox(
     "Hány receptet szeretnél generálni?",
     [1, 2, 3, 4, 5],
-    index=1,
 )
 
 # Generate recipes button
