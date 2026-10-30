@@ -39,6 +39,11 @@ cooking_speed = st.radio(
     ["Gyors (30 perc alatt)", "Ráérek"],
 )
 
+# Seasonal ingredients
+st.text("Szeretnél szezonális alapanyagokat használni?")
+is_seasonal = st.checkbox("Szezonális alapanyagok előnyben részesítése")
+seasonal_info = __import__("datetime").date.today().isoformat()
+
 # Food main types
 dish_main_type = st.selectbox(
     "Milyen ételt szeretnél enni?",
@@ -80,6 +85,8 @@ if st.button("Recept generálása"):
             )
         else:
             prompt_conditions.append("A felhasználó nem sorolt fel otthoni alapanyagokat, így nem kell figyelembe venni azokat.")
+    if is_seasonal:
+        prompt_conditions.append("Részesítsd előnyben a szezonális alapanyagokat Magyarországon (középüeurópai régióban). A mai dátum: " + seasonal_info + ".")
 
     prompt = (
         f"Javasolj {recipe_count} darab receptet magyarul az alábbi feltételek szerint. Ne adj olyan talaltokat ami szinte ugyanazok."
@@ -89,7 +96,7 @@ if st.button("Recept generálása"):
         '"ingredients":[{"name":"hozzávaló","amount":"mennyiség"}],'
         '"steps":["elkészítési lépés"]}]}. '
         
-        "A source_url mezőben add meg az eredeti forrásoldal teljes URL-jét, ahol a receptet találtad."
+        "A kereséshez használd a Google keresőt, és a találatok alapján generáld a recepteket."
         "Ne találj ki URL-t hanem csak valódi URL-t csatolj ide. A forrásoldal url-t vizsgáld felül és csak valódi, jelenleg is elérhető URL-t adj vissza."
         "Ha nem találsz vagy hibás az url, ird ki, hogy 'Hibás forrásoldal'."
         "Vizsgáld felül az URL-eket és ha nem érded el a weboldalt megnyitva a UI-on a receptet ird ki, hogy 'Elavult forrásoldal'."
