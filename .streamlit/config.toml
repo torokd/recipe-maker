@@ -1,10 +1,19 @@
 [theme]
-base = "dark"
-primaryColor = "#8B5CF6"
-backgroundColor = "#0B1020"
-secondaryBackgroundColor = "#151C2F"
-textColor = "#F4F7FF"
+base = "light"
+primaryColor = "#A87555"
+backgroundColor = "#FBF9F5"
+secondaryBackgroundColor = "#F1EAE0"
+textColor = "#40352D"
 font = "sans serif"
+headingFont = "sans serif"
+codeFont = "monospace"
+linkColor = "#887C9E"
+codeBackgroundColor = "#F4EFE7"
+borderColor = "#E3D8C9"
+baseRadius = "large"
+buttonRadius = "large"
+showWidgetBorder = true
+showSidebarBorder = true
 
 [client]
 toolbarMode = "minimal"

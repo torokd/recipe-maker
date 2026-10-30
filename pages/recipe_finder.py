@@ -75,10 +75,10 @@ if st.button("Recept generálása"):
     if use_storage:
         if storage.strip():
             prompt_conditions.append(
-                f"Lehetőleg ezeket az otthoni alapanyagokat használd: {storage.strip()}."
+                f"Használj minnél többet az otthoni alapanyagokból, nem kell mindet felhasználni: {storage.strip()}."
             )
         else:
-            prompt_conditions.append("Az otthoni alapanyagokra építs, de a felhasználó nem sorolta fel őket.")
+            prompt_conditions.append("A felhasználó nem sorolt fel otthoni alapanyagokat, így nem kell figyelembe venni azokat.")
 
     prompt = (
         f"Javasolj {recipe_count} darab receptet magyarul az alábbi feltételek szerint. "
@@ -97,7 +97,11 @@ if st.button("Recept generálása"):
                 response = get_client(API_KEY).models.generate_content(
                     model="gemini-3.5-flash-lite",
                     contents=prompt,
-                    config=types.GenerateContentConfig(response_mime_type="application/json"),
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        temperature=0.7,
+                        max_output_tokens=2000,
+                    ),
                 )
             recipe_data = json.loads(response.text or "{}")
             recipes = recipe_data.get("recipes", [])
