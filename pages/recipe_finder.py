@@ -27,7 +27,7 @@ st.set_page_config(
 )
 
 # Title
-st.title("👩‍🍳 Le petit sous-chef d'Adèle")
+st.title("👩‍🍳 Le petit Adèle")
 
 # Dietary preferences
 st.text("Válaszd ki az étrendi preferenciáidat:")
