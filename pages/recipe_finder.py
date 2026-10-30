@@ -54,6 +54,13 @@ main_sub_type = st.selectbox(
 use_storage = st.checkbox("Szeretném az itthoni alapanyagokat használni")
 storage = st.text_area("Írd be mi van otthon:", height=100) if use_storage else ""
 
+# Recipe counter
+recipe_count = st.selectbox(
+    "Hány receptet szeretnél generálni?",
+    [1, 2, 3, 4, 5],
+    index=1,
+)
+
 # Generate recipes button
 if st.button("Recept generálása"):
     # Replace the previous results instead of accumulating recipe history.
@@ -75,7 +82,7 @@ if st.button("Recept generálása"):
             prompt_conditions.append("Az otthoni alapanyagokra építs, de a felhasználó nem sorolta fel őket.")
 
     prompt = (
-        "Javasolj három darab receptet magyarul az alábbi feltételek szerint. "
+        f"Javasolj {recipe_count} darab receptet magyarul az alábbi feltételek szerint. "
         "Kizárólag érvényes JSON-t adj vissza, az alábbi szerkezettel: "
         '{"recipes":[{"name":"recept neve",'
         '"ingredients":[{"name":"hozzávaló","amount":"mennyiség"}],'
