@@ -1,6 +1,7 @@
 # Imports
 import json
 import os
+from urllib.parse import quote_plus
 import streamlit as st
 from google import genai
 from google.genai import types
@@ -93,11 +94,7 @@ if st.button("Recept generálása"):
         '{"recipes":[{"name":"recept neve","source_url":"az eredeti recept URL-je",'
         '"ingredients":[{"name":"hozzávaló","amount":"mennyiség"}],'
         '"steps":["elkészítési lépés"]}]}. '
-        
-        "A kereséshez használd a Google keresőt, és a találatok alapján generáld a recepteket."
-        "Ne találj ki URL-t hanem csak valódi URL-t csatolj ide. A forrásoldal url-t vizsgáld felül és csak valódi, jelenleg is elérhető URL-t adj vissza."
-        "Ha nem találsz vagy hibás az url, ird ki, hogy 'Hibás forrásoldal'."
-        "Vizsgáld felül az URL-eket és ha nem érded el a weboldalt megnyitva a UI-on a receptet ird ki, hogy 'Elavult forrásoldal'."
+
         + "\n".join(prompt_conditions)
     )
 
@@ -113,7 +110,7 @@ if st.button("Recept generálása"):
                     config=types.GenerateContentConfig(
                         response_mime_type="application/json",
                         temperature=0.7,
-                        max_output_tokens=1000,
+                        max_output_tokens=5000,
                     ),
                 )
             recipe_data = json.loads(response.text or "{}")
@@ -155,7 +152,24 @@ for recipe_batch in st.session_state.recipe_finder_recipes:
             else:
                 st.write("Nincsenek megadva elkészítési lépések.")
 
-            source_url = recipe.get("source_url", "")
-            st.subheader("Recept linkje")
-            if source_url:
-                st.markdown(f"[{source_url}]({source_url})")
+            search_column, save_column = st.columns(2)
+            with search_column:
+                _, button_column, _ = st.columns([1, 8, 1])
+                with button_column:
+                    st.link_button(
+                        "Google keresés indítása",
+                        f"https://www.google.com/search?q={quote_plus(str(recipe_name))}",
+                        use_container_width=True,
+                        type="primary",
+                    )
+
+            with save_column:
+                _, button_column, _ = st.columns([1, 8, 1])
+                with button_column:
+                    st.button(
+                        "Recept mentése későbbre",
+                        type="primary",
+                        key=f"save_recipe_{recipe_name}",
+                        on_click=lambda r=recipe: save_recipe(r),
+                        use_container_width=True,
+                    )
